@@ -1,0 +1,720 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
+            --border-radius: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        .particle:nth-child(2n) {
+            width: 2px;
+            height: 2px;
+            animation-duration: 10s;
+        }
+
+        .particle:nth-child(3n) {
+            width: 6px;
+            height: 6px;
+            animation-duration: 20s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cart-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        .cart-title {
+            background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 3.5rem;
+            font-weight: 800;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .cart-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 2rem;
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .cart-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .table-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .table {
+            margin: 0;
+            background: transparent;
+        }
+
+        .table thead th {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 1.2rem 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+            animation: fadeInRow 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .table tbody tr:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .table tbody tr:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .table tbody tr:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .table tbody tr:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .table tbody tr:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeInRow {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .table tbody td {
+            padding: 1.5rem 1rem;
+            vertical-align: middle;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .cart-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-img:hover {
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.1rem;
+        }
+
+        .quantity-badge {
+            background: var(--success-gradient);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .amount {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .remove-btn {
+            background: var(--danger-gradient);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .remove-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(250, 112, 154, 0.4);
+            color: white;
+        }
+
+        .remove-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .remove-btn:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .total-row {
+            background: var(--primary-gradient);
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .total-row th,
+        .total-row td {
+            padding: 1.5rem 1rem;
+            border: none;
+        }
+
+        .place-order-btn {
+            background: var(--success-gradient);
+            border: none;
+            color: white;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: bounceIn 1s ease-out 0.5s both;
+        }
+
+        .place-order-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(79, 172, 254, 0.4);
+            color: white;
+        }
+
+        .place-order-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: all 0.5s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .place-order-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 4rem 2rem;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .empty-cart-icon {
+            font-size: 5rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 2rem;
+            animation: float-gentle 3s ease-in-out infinite;
+        }
+
+        .empty-cart-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.5rem;
+            font-weight: 300;
+        }
+
+        @keyframes float-gentle {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .alert {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: slideInDown 0.5s ease-out;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+
+            70% {
+                transform: scale(0.9);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .cart-title {
+                font-size: 2.5rem;
+            }
+
+            .table tbody td {
+                padding: 1rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .cart-img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .place-order-btn {
+                padding: 14px 30px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .cart-title {
+                font-size: 2rem;
+            }
+
+            .back-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating Particles -->
+    <div class="floating-particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 2.5s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 1.5s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 4.5s;"></div>
+    </div>
+
+    {% if messages %}
+    <div class="container mt-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible shadow-sm border-0 fade show d-flex align-items-center justify-content-between auto-dismiss"
+            role="alert">
+            <div class="d-flex align-items-center gap-2">
+                {% if message.tags == 'success' %}
+                <i class="fas fa-check-circle text-success"></i>
+                {% elif message.tags == 'error' %}
+                <i class="fas fa-exclamation-circle text-danger"></i>
+                {% elif message.tags == 'warning' %}
+                <i class="fas fa-exclamation-triangle text-warning"></i>
+                {% else %}
+                <i class="fas fa-info-circle text-info"></i>
+                {% endif %}
+                {{ message }}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="container py-5">
+        <div class="cart-header">
+            <h1 class="cart-title">
+                <i class="fas fa-shopping-cart"></i> Your Cart
+            </h1>
+            <p class="cart-subtitle">Review your selected items</p>
+        </div>
+
+        <a href="{% url 'home' %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Menu Items
+        </a>
+
+        {% if cart_items %}
+        <div class="cart-card">
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="text-center">
+                                    <i class="fas fa-image me-2"></i>Image
+                                </th>
+                                <th scope="col">
+                                    <i class="fas fa-utensils me-2"></i>Item
+                                </th>
+                                <th scope="col" class="text-center">
+                                    <i class="fas fa-sort-numeric-up me-2"></i>Quantity
+                                </th>
+                                <th scope="col" class="text-center">
+                                    <i class="fas fa-rupee-sign me-2"></i>Amount
+                                </th>
+                                <th scope="col" class="text-center">
+                                    <i class="fas fa-cog me-2"></i>Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cart in cart_items %}
+                            <tr>
+                                <td class="text-center">
+                                    {% if cart.item.photo %}
+                                    <img src="{{ cart.item.photo.url }}" alt="{{ cart.item.name }}" class="cart-img">
+                                    {% else %}
+                                    <div class="d-flex align-items-center justify-content-center bg-light rounded"
+                                        style="width: 80px; height: 80px;">
+                                        <i class="fas fa-image text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="item-name">{{ cart.item.name }}</div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="quantity-badge">{{ cart.quantity }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="amount">₹{{ cart.amount }}</div>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{% url 'remove_from_cart' cart.item.id %}" class="remove-btn btn btn-sm">
+                                        <i class="fas fa-trash-alt me-1"></i>
+                                        Remove
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <th colspan="3" class="text-end">
+                                    <i class="fas fa-calculator me-2"></i>Total:
+                                </th>
+                                <th colspan="2" class="text-center">₹{{ total }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <form method="POST" action="{% url 'place_order' %}">
+                {% csrf_token %}
+                <button type="submit" class="place-order-btn btn">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Place Order
+                </button>
+            </form>
+        </div>
+
+        {% else %}
+        <div class="empty-cart">
+            <div class="empty-cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="empty-cart-text">Your cart is empty</div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Auto-dismiss alerts
+            const alerts = document.querySelectorAll(".auto-dismiss");
+            alerts.forEach(function (alert) {
+                setTimeout(() => {
+                    alert.classList.remove("show");
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 500);
+                }, 4000);
+            });
+
+            // Add ripple effect to buttons
+            const buttons = document.querySelectorAll('.place-order-btn, .remove-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+
+                    ripple.style.cssText = `
+                        position: absolute;
+                        border-radius: 50%;
+                        background: rgba(255, 255, 255, 0.6);
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        left: ${x}px;
+                        top: ${y}px;
+                        width: ${size}px;
+                        height: ${size}px;
+                    `;
+
+                    this.appendChild(ripple);
+
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Add scroll animation for table rows
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                    }
+                });
+            });
+
+            document.querySelectorAll('tbody tr').forEach(row => {
+                observer.observe(row);
+            });
+        });
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+</html>

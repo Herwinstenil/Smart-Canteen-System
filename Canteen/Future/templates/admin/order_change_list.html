@@ -1,0 +1,869 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Order Summary</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            animation: backgroundFlow 15s ease-in-out infinite alternate;
+        }
+
+        @keyframes backgroundFlow {
+            0% {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+
+            25% {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            }
+
+            50% {
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            }
+
+            75% {
+                background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            }
+
+            100% {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+        }
+
+        /* Floating geometric shapes */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            animation: floatShape 10s ease-in-out infinite;
+        }
+
+        .shape.circle {
+            border-radius: 50%;
+        }
+
+        .shape.square {
+            border-radius: 4px;
+        }
+
+        .shape.triangle {
+            width: 0;
+            height: 0;
+            background: transparent;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 16px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .shape:nth-child(1) {
+            width: 12px;
+            height: 12px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 8px;
+            height: 8px;
+            top: 60%;
+            left: 85%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 16px;
+            height: 16px;
+            top: 80%;
+            left: 15%;
+            animation-delay: 4s;
+        }
+
+        .shape:nth-child(4) {
+            top: 30%;
+            left: 75%;
+            animation-delay: 1s;
+        }
+
+        .shape:nth-child(5) {
+            width: 10px;
+            height: 10px;
+            top: 70%;
+            left: 50%;
+            animation-delay: 3s;
+        }
+
+        .shape:nth-child(6) {
+            width: 14px;
+            height: 14px;
+            top: 45%;
+            left: 25%;
+            animation-delay: 5s;
+        }
+
+        @keyframes floatShape {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.6;
+            }
+
+            25% {
+                transform: translateY(-15px) rotate(90deg);
+                opacity: 1;
+            }
+
+            50% {
+                transform: translateY(-30px) rotate(180deg);
+                opacity: 0.8;
+            }
+
+            75% {
+                transform: translateY(-15px) rotate(270deg);
+                opacity: 1;
+            }
+        }
+
+        .orders-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: cardEntrance 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 5s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        @keyframes cardEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: titleWave 3s ease-in-out infinite;
+        }
+
+        @keyframes titleWave {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+
+            50% {
+                transform: scale(1.03) rotate(1deg);
+            }
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: statSlideUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .stat-card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .stat-card:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes statSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #6366f1;
+            display: block;
+            animation: numberPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes numberPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .table-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: transparent;
+        }
+
+        .custom-table thead th {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            font-weight: 700;
+            padding: 1.2rem;
+            text-align: center;
+            border: none;
+            font-size: 1.1rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+        }
+
+        .custom-table thead th:first-child {
+            border-top-left-radius: 16px;
+        }
+
+        .custom-table thead th:last-child {
+            border-top-right-radius: 16px;
+        }
+
+        .custom-table tbody tr {
+            animation: rowFadeIn 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateX(-30px);
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .custom-table tbody tr:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .custom-table tbody tr:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .custom-table tbody tr:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .custom-table tbody tr:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .custom-table tbody tr:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes rowFadeIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .custom-table tbody tr:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.02) translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .custom-table td {
+            padding: 1.2rem;
+            text-align: center;
+            vertical-align: middle;
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+        }
+
+        .custom-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .date-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 20px;
+            font-weight: 700;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .view-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.25rem;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .view-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .view-btn:hover::before {
+            left: 0;
+        }
+
+        .view-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
+            color: white;
+        }
+
+        .delete-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1rem;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .delete-btn:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .empty-state .emoji {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .empty-message {
+            font-size: 1.3rem;
+            color: #6b7280;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-subtitle {
+            font-size: 1rem;
+            color: #9ca3af;
+        }
+
+        .export-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: slideUp 0.8s ease-out 1s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .export-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .export-form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .date-input {
+            padding: 0.75rem 1rem;
+            border: 2px solid rgba(107, 114, 128, 0.3);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            background: white;
+        }
+
+        .export-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.5rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .export-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #059669, #047857);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .export-btn:hover::before {
+            left: 0;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4);
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: rgba(107, 114, 128, 0.1);
+            color: #374151;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(107, 114, 128, 0.2);
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            max-width: 200px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button:hover {
+            background: rgba(107, 114, 128, 0.2);
+            transform: translateY(-2px);
+            color: #111827;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .orders-container {
+                padding: 1rem;
+            }
+
+            .main-card {
+                padding: 1.5rem;
+                border-radius: 20px;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .stats-overview {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .custom-table thead th,
+            .custom-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .export-form {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .date-input {
+                width: 100%;
+                min-width: unset;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.75rem;
+            }
+
+            .custom-table {
+                font-size: 0.8rem;
+            }
+
+            .view-btn,
+            .delete-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating shapes -->
+    <div class="floating-shapes">
+        <div class="shape circle"></div>
+        <div class="shape square"></div>
+        <div class="shape circle"></div>
+        <div class="shape triangle"></div>
+        <div class="shape square"></div>
+        <div class="shape circle"></div>
+    </div>
+
+    <div class="orders-container">
+        <div class="main-card">
+            <h1 class="title">📋 Order Summary</h1>
+
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <span class="stat-number">{{ dates|length|default:"0" }}</span>
+                    <div class="stat-label">Total Days</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">📊</span>
+                    <div class="stat-label">Analytics</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">🔥</span>
+                    <div class="stat-label">Active Orders</div>
+                </div>
+            </div>
+
+            {% if dates %}
+            <div class="table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>📆 Date</th>
+                            <th>📋 Orders</th>
+                            <th>🗑️ Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in dates %}
+                        <tr>
+                            <td>
+                                <span class="date-badge">{{ d.date }}</span>
+                            </td>
+                            <td>
+                                <a class="view-btn" href="{{ d.url }}" style="text-decoration: none;">
+                                    <span>👀</span>
+                                    View Order History
+                                    <span>→</span>
+                                </a>
+                            </td>
+                            <td>
+                                <form method="POST" action="{% url 'delete_orders_by_date' %}"
+                                    onsubmit="return confirm('Are you sure you want to delete orders from this date?')"
+                                    style="margin: 0;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="date" value="{{ d.date|date:'Y-m-d' }}">
+                                    <button type="submit" class="delete-btn">
+                                        <span>🗑️</span>
+                                        Remove
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <span class="emoji">📋</span>
+                <div class="empty-message">No orders have been placed yet</div>
+                <div class="empty-subtitle">Orders will appear here once customers start placing them</div>
+            </div>
+            {% endif %}
+
+            <div class="export-section">
+                <div class="export-title">📥 Export Daily Report</div>
+                <form method="get" action="{% url 'export_daily_report' %}" class="export-form">
+                    <input type="date" name="date" class="date-input" required>
+                    <button type="submit" class="export-btn">
+                        <span>📊</span>
+                        Generate Report
+                    </button>
+                </form>
+            </div>
+
+            <div style="text-align: center; margin-top: 2.5rem;">
+                <a href="/admin/" class="back-button" style="text-decoration: none;">
+                    <span>←</span>
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Interactive effects
+        document.addEventListener('DOMContentLoaded', function () {
+            // Button ripple effects
+            const buttons = document.querySelectorAll('.view-btn, .delete-btn, .export-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    const ripple = document.createElement('span');
+                    const rect = button.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        background: rgba(255, 255, 255, 0.3);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple 0.6s ease-out;
+                        pointer-events: none;
+                        z-index: 1;
+                    `;
+
+                    button.appendChild(ripple);
+
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Parallax effect for floating shapes
+            document.addEventListener('mousemove', function (e) {
+                const shapes = document.querySelectorAll('.shape');
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+
+                shapes.forEach((shape, index) => {
+                    const speed = (index + 1) * 0.4;
+                    const xPos = (x - 0.5) * speed * 20;
+                    const yPos = (y - 0.5) * speed * 20;
+
+                    shape.style.transform = `translate(${xPos}px, ${yPos}px)`;
+                });
+            });
+
+            // Enhanced date input interaction
+            const dateInput = document.querySelector('.date-input');
+            if (dateInput) {
+                dateInput.addEventListener('focus', function () {
+                    this.style.transform = 'scale(1.02)';
+                });
+
+                dateInput.addEventListener('blur', function () {
+                    this.style.transform = 'scale(1)';
+                });
+            }
+        });
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+</html>
+{% endblock %}

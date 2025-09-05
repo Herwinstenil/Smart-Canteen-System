@@ -1,0 +1,875 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Orders for {{ selected_date }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            animation: backgroundDance 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes backgroundDance {
+            0% {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+
+            20% {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            }
+
+            40% {
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            }
+
+            60% {
+                background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            }
+
+            80% {
+                background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            }
+
+            100% {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+        }
+
+        /* Floating orbs */
+        .floating-orbs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .orb {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: floatOrb 12s ease-in-out infinite;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .orb:nth-child(1) {
+            width: 60px;
+            height: 60px;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .orb:nth-child(2) {
+            width: 40px;
+            height: 40px;
+            top: 70%;
+            left: 80%;
+            animation-delay: 3s;
+        }
+
+        .orb:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            top: 85%;
+            left: 10%;
+            animation-delay: 6s;
+        }
+
+        .orb:nth-child(4) {
+            width: 30px;
+            height: 30px;
+            top: 20%;
+            left: 85%;
+            animation-delay: 2s;
+        }
+
+        .orb:nth-child(5) {
+            width: 50px;
+            height: 50px;
+            top: 60%;
+            left: 40%;
+            animation-delay: 4s;
+        }
+
+        .orb:nth-child(6) {
+            width: 35px;
+            height: 35px;
+            top: 40%;
+            left: 15%;
+            animation-delay: 8s;
+        }
+
+        @keyframes floatOrb {
+
+            0%,
+            100% {
+                transform: translateY(0px) translateX(0px) rotate(0deg) scale(1);
+                opacity: 0.6;
+            }
+
+            25% {
+                transform: translateY(-20px) translateX(10px) rotate(90deg) scale(1.1);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: translateY(-40px) translateX(-5px) rotate(180deg) scale(0.9);
+                opacity: 1;
+            }
+
+            75% {
+                transform: translateY(-20px) translateX(-10px) rotate(270deg) scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .orders-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border-radius: 28px;
+            padding: 2.5rem;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: cardSlideUp 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 6s ease-in-out infinite;
+        }
+
+        .main-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(99, 102, 241, 0.03), transparent);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes cardSlideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(60px) scale(0.95);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899, #f59e0b);
+            background-size: 300% 300%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: gradientShift 4s ease-in-out infinite, titleBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes titleBounce {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+
+            50% {
+                transform: scale(1.03) rotate(1deg);
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: statFloat 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(40px) scale(0.9);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .stat-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .stat-card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .stat-card:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        .stat-card:nth-child(4) {
+            animation-delay: 0.8s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes statFloat {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: iconPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes iconPulse {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+
+            50% {
+                transform: scale(1.1) rotate(5deg);
+            }
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #6366f1;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .table-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: transparent;
+        }
+
+        .custom-table thead th {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+            color: white;
+            font-weight: 700;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            border: none;
+            font-size: 1.1rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .custom-table thead th:first-child {
+            border-top-left-radius: 16px;
+        }
+
+        .custom-table thead th:last-child {
+            border-top-right-radius: 16px;
+        }
+
+        .custom-table tbody tr {
+            animation: orderSlideIn 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateX(-40px);
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .custom-table tbody tr:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .custom-table tbody tr:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .custom-table tbody tr:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .custom-table tbody tr:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .custom-table tbody tr:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes orderSlideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .custom-table tbody tr:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.02) translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .custom-table td {
+            padding: 1.5rem 1rem;
+            text-align: center;
+            vertical-align: middle;
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+        }
+
+        .custom-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .order-number {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 20px;
+            font-weight: 700;
+            display: inline-block;
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+            animation: numberGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes numberGlow {
+            0% {
+                box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+            }
+
+            100% {
+                box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+            }
+        }
+
+        .employee-name {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 20px;
+            font-weight: 700;
+            display: inline-block;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .items-list {
+            background: rgba(107, 114, 128, 0.1);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(107, 114, 128, 0.2);
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .item-entry {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 0.5rem 0.75rem;
+            margin: 0.25rem 0;
+            border-radius: 8px;
+            font-weight: 600;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .item-entry:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.02);
+        }
+
+        .amount-badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 20px;
+            font-weight: 700;
+            display: inline-block;
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
+            font-size: 1.1rem;
+        }
+
+        .time-badge {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 20px;
+            font-weight: 700;
+            display: inline-block;
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 5rem 2rem;
+            animation: emptyFloat 3s ease-in-out infinite;
+        }
+
+        .empty-state .mega-emoji {
+            font-size: 6rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            animation: emptyRotate 6s linear infinite;
+        }
+
+        @keyframes emptyRotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes emptyFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .empty-message {
+            font-size: 1.5rem;
+            color: #6b7280;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-subtitle {
+            font-size: 1rem;
+            color: #9ca3af;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem 2rem;
+            background: rgba(107, 114, 128, 0.1);
+            color: #374151;
+            text-decoration: none;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(107, 114, 128, 0.2);
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            max-width: 250px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(107, 114, 128, 0.2), rgba(107, 114, 128, 0.3));
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .back-button:hover::before {
+            left: 0;
+        }
+
+        .back-button:hover {
+            transform: translateY(-4px) scale(1.05);
+            color: #111827;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .orders-container {
+                padding: 1rem;
+            }
+
+            .main-card {
+                padding: 1.5rem;
+                border-radius: 20px;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-icon {
+                font-size: 2.5rem;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            .custom-table thead th,
+            .custom-table td {
+                padding: 1rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .items-list {
+                max-width: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.75rem;
+            }
+
+            .stat-card {
+                padding: 1.5rem;
+            }
+
+            .custom-table {
+                font-size: 0.8rem;
+            }
+
+            .order-number,
+            .employee-name,
+            .amount-badge,
+            .time-badge {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .items-list {
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating orbs -->
+    <div class="floating-orbs">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <div class="orders-container">
+        <div class="main-card">
+            <h1 class="title">📋 Orders for {{ selected_date }}</h1>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-icon">📊</span>
+                    <span class="stat-number">{{ orders|length|default:"0" }}</span>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🗓️</span>
+                    <span class="stat-number">{{ selected_date|date:"M d" }}</span>
+                    <div class="stat-label">Selected Date</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">💰</span>
+                    <span class="stat-number">
+                        {% if orders %}
+                        ₹{% for order in orders %}{{ order.total_amount|add:0 }}{% if not forloop.last %}{% endif %}{%
+                        endfor %}
+                        {% else %}
+                        ₹0
+                        {% endif %}
+                    </span>
+                    <div class="stat-label">Total Revenue</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">⚡</span>
+                    <span class="stat-number">🔥</span>
+                    <div class="stat-label">Live Data</div>
+                </div>
+            </div>
+
+            <div class="table-section">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>🔢 Order #</th>
+                            <th>👤 Employee</th>
+                            <th>🍽️ Items Ordered</th>
+                            <th>💰 Total Amount</th>
+                            <th>⏰ Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>
+                                <span class="order-number">#{{ order.daily_order_number }}</span>
+                            </td>
+                            <td>
+                                <span class="employee-name">{{ order.employee.name }}</span>
+                            </td>
+                            <td>
+                                <div class="items-list">
+                                    {% for cart_item in order.cartitem_set.all %}
+                                    <div class="item-entry">
+                                        {{ cart_item.menu_item.name }} × {{ cart_item.quantity }}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td>
+                                <span class="amount-badge">₹{{ order.total_amount }}</span>
+                            </td>
+                            <td>
+                                <span class="time-badge">{{ order.time }}</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <span class="mega-emoji">🍽️</span>
+                                <div class="empty-message">No orders placed on this date</div>
+                                <div class="empty-subtitle">Orders will appear here once employees start placing them
+                                    for this date.</div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="text-align: center; margin-top: 2.5rem;">
+                <a href="{% url 'admin:Future_order_changelist' %}" class="back-button" style="text-decoration: none;">
+                    <span>←</span>
+                    Back to Dates
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pass Django data as JSON in data attributes -->
+    <div id="orders-data"
+        data-amounts='[{% for order in orders %}{{ order.total_amount }}{% if not forloop.last %},{% endif %}{% endfor %}]'>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // ✅ Get amounts from data attribute
+            const ordersDataElement = document.getElementById('orders-data');
+            const orderAmounts = JSON.parse(ordersDataElement.dataset.amounts);
+
+            // ✅ Calculate total revenue
+            const totalRevenue = orderAmounts.reduce((sum, amount) => sum + amount, 0);
+            const revenueElement = document.querySelector('.stat-card:nth-child(3) .stat-number');
+
+            revenueElement.textContent = '₹' + (totalRevenue > 0 ? totalRevenue.toFixed(0) : 0);
+
+            // ✅ Orb parallax effect
+            document.addEventListener('mousemove', function (e) {
+                const orbs = document.querySelectorAll('.orb');
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+
+                orbs.forEach((orb, index) => {
+                    const speed = (index + 1) * 0.5;
+                    const xPos = (x - 0.5) * speed * 30;
+                    const yPos = (y - 0.5) * speed * 30;
+                    const rotation = (x + y) * speed * 360;
+                    orb.style.transform = `translate(${xPos}px, ${yPos}px) rotate(${rotation}deg)`;
+                });
+            });
+
+            // ✅ Table row hover effects
+            const tableRows = document.querySelectorAll('.custom-table tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function () {
+                    this.style.background = 'rgba(255, 255, 255, 1)';
+                    this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
+                });
+                row.addEventListener('mouseleave', function () {
+                    this.style.background = 'rgba(255, 255, 255, 0.8)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+
+            // ✅ Item hover effects
+            const itemEntries = document.querySelectorAll('.item-entry');
+            itemEntries.forEach(entry => {
+                entry.addEventListener('mouseenter', function () {
+                    this.style.transform = 'scale(1.05) rotate(1deg)';
+                    this.style.background = 'rgba(255, 255, 255, 1)';
+                });
+                entry.addEventListener('mouseleave', function () {
+                    this.style.transform = 'scale(1) rotate(0deg)';
+                    this.style.background = 'rgba(255, 255, 255, 0.8)';
+                });
+            });
+
+            // ✅ Stat card click effect
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.addEventListener('click', function () {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'translateY(-8px) scale(1.05)';
+                    }, 150);
+                });
+            });
+
+            // ✅ Animate numbers (skip revenue index = 2)
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach((number, index) => {
+                if (index === 2) return; // Skip revenue
+                const text = number.textContent;
+                if (!isNaN(text) && text !== '') {
+                    let count = 0;
+                    const target = parseInt(text);
+                    const increment = Math.ceil(target / 30);
+                    const timer = setInterval(() => {
+                        count += increment;
+                        if (count >= target) {
+                            count = target;
+                            clearInterval(timer);
+                        }
+                        number.textContent = count;
+                    }, 50);
+                }
+            });
+        });
+
+        // ✅ Background sparkle effect
+        let scrollTimeout;
+        window.addEventListener('scroll', function () {
+            document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                document.body.style.background = '';
+            }, 500);
+        });
+    </script>
+
+</body>
+
+</html>
+{% endblock %}

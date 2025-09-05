@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>QR Scanner Pro</title>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 118, 117, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(162, 155, 254, 0.3) 0%, transparent 50%);
+            animation: backgroundMove 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes backgroundMove {
+
+            0%,
+            100% {
+                transform: translateX(0) translateY(0);
+            }
+
+            33% {
+                transform: translateX(-20px) translateY(-10px);
+            }
+
+            66% {
+                transform: translateX(20px) translateY(10px);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 400px;
+            animation: slideInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+            }
+
+            to {
+                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6));
+            }
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        #reader {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #reader::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.8s;
+        }
+
+        #reader:hover::before {
+            left: 100%;
+        }
+
+        .scanner-icon {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .icon-wrapper {
+            display: inline-block;
+            font-size: 4rem;
+            animation: iconFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        @keyframes iconFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: pulseRing 2s linear infinite;
+        }
+
+        @keyframes pulseRing {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+        }
+
+        #camera-container {
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+        }
+
+        #camera-container.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        #camera-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 3px solid transparent;
+            border-radius: 16px;
+            background: linear-gradient(45deg, #00f2fe, #4facfe, #00f2fe);
+            background-size: 400% 400%;
+            animation: borderGlow 2s ease infinite;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: subtract;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: subtract;
+            pointer-events: none;
+        }
+
+        @keyframes borderGlow {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            position: relative;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+            min-width: 180px;
+            justify-content: center;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        #result {
+            margin-top: 2rem;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            text-align: center;
+            font-weight: 500;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .result-success {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(40, 167, 69, 0.1));
+            border-color: rgba(40, 167, 69, 0.3);
+            animation: successPulse 0.6s ease-out;
+        }
+
+        .result-error {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.2), rgba(220, 53, 69, 0.1));
+            border-color: rgba(220, 53, 69, 0.3);
+            animation: errorShake 0.6s ease-out;
+        }
+
+        .result-scanning {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.1));
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        @keyframes successPulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes errorShake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .scanning-dots::after {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: scanningDots 1.4s infinite;
+            margin-left: 4px;
+        }
+
+        @keyframes scanningDots {
+
+            0%,
+            20% {
+                box-shadow: 0 0 currentColor, 8px 0 transparent, 16px 0 transparent;
+            }
+
+            40% {
+                box-shadow: 0 0 currentColor, 8px 0 currentColor, 16px 0 transparent;
+            }
+
+            60%,
+            100% {
+                box-shadow: 0 0 currentColor, 8px 0 currentColor, 16px 0 currentColor;
+            }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 480px) {
+            .container {
+                max-width: 350px;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            #reader {
+                padding: 1.5rem;
+            }
+
+            .icon-wrapper {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">QR Scanner Pro</h1>
+            <p class="subtitle">Advanced QR Code Detection</p>
+        </div>
+
+        <div id="reader">
+            <div class="scanner-icon">
+                <div class="icon-wrapper">📸</div>
+                <div class="pulse-ring"></div>
+            </div>
+
+            <div id="camera-container"></div>
+
+            <div class="actions">
+                <button id="start-scan" class="btn btn-primary">
+                    <span>🚀</span> Start Scanning
+                </button>
+                <button id="stop-scan" class="btn btn-danger" style="display:none;">
+                    <span>⏹️</span> Stop Scanning
+                </button>
+                <a href="#" id="scan-file" class="btn btn-secondary">
+                    <span>📁</span> Scan Image File
+                </a>
+            </div>
+        </div>
+
+        <div id="result">Ready to scan QR codes</div>
+    </div>
+
+    <script>
+        let html5QrcodeScanner;
+        let scanning = false;
+
+        function onScanSuccess(decodedText, decodedResult) {
+            const resultEl = document.getElementById('result');
+            const match = decodedText.match(/\/verify-employee\/(\d+)\//);
+
+            if (match) {
+                const employeeId = match[1];
+                resultEl.innerHTML = `✅ Valid QR Code detected! Redirecting...`;
+                resultEl.className = 'result-success';
+
+                stopScanning(() => {
+                    setTimeout(() => {
+                        window.location.href = `/verify-employee/${employeeId}/`;
+                    }, 1500);
+                });
+            } else {
+                resultEl.innerHTML = `❌ Invalid QR Code format`;
+                resultEl.className = 'result-error';
+
+                setTimeout(() => {
+                    resultEl.className = '';
+                    if (scanning) {
+                        resultEl.innerHTML = `<span class="scanning-dots">Scanning for QR codes</span>`;
+                        resultEl.className = 'result-scanning';
+                    }
+                }, 3000);
+            }
+        }
+
+        function onScanError(errorMessage) {
+            // Silent error handling for better UX
+        }
+
+        function startScanning() {
+            if (!html5QrcodeScanner) {
+                html5QrcodeScanner = new Html5Qrcode("camera-container");
+            }
+
+            const resultEl = document.getElementById('result');
+            const cameraContainer = document.getElementById("camera-container");
+
+            html5QrcodeScanner.start(
+                { facingMode: "environment" },
+                {
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 }
+                },
+                onScanSuccess,
+                onScanError
+            ).then(() => {
+                scanning = true;
+                cameraContainer.classList.add("active");
+                document.getElementById("start-scan").style.display = "none";
+                document.getElementById("stop-scan").style.display = "inline-flex";
+                document.querySelector(".scanner-icon").style.display = "none";
+
+                resultEl.innerHTML = `<span class="scanning-dots">Scanning for QR codes</span>`;
+                resultEl.className = 'result-scanning';
+            }).catch(err => {
+                resultEl.innerHTML = `❌ Camera access denied or unavailable`;
+                resultEl.className = 'result-error';
+                console.error(err);
+            });
+        }
+
+        function stopScanning(callback) {
+            if (html5QrcodeScanner && scanning) {
+                html5QrcodeScanner.stop().then(() => {
+                    html5QrcodeScanner.clear();
+                    scanning = false;
+
+                    document.getElementById("camera-container").classList.remove("active");
+                    document.getElementById("start-scan").style.display = "inline-flex";
+                    document.getElementById("stop-scan").style.display = "none";
+                    document.querySelector(".scanner-icon").style.display = "block";
+
+                    if (callback) {
+                        callback();
+                    } else {
+                        const resultEl = document.getElementById('result');
+                        resultEl.innerHTML = 'Scanning stopped';
+                        resultEl.className = '';
+                    }
+                }).catch(err => {
+                    console.error('Error stopping scanner:', err);
+                });
+            } else {
+                if (callback) callback();
+            }
+        }
+
+        // Event listeners
+        document.getElementById('start-scan').addEventListener('click', startScanning);
+        document.getElementById('stop-scan').addEventListener('click', () => stopScanning());
+
+        document.getElementById('scan-file').addEventListener('click', (e) => {
+            e.preventDefault();
+
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const resultEl = document.getElementById('result');
+                    resultEl.innerHTML = 'Processing image...';
+                    resultEl.className = 'result-scanning';
+
+                    Html5Qrcode.scanFile(file, true)
+                        .then(decodedText => {
+                            onScanSuccess(decodedText, null);
+                        })
+                        .catch(err => {
+                            resultEl.innerHTML = '❌ No QR code found in image';
+                            resultEl.className = 'result-error';
+                            setTimeout(() => {
+                                resultEl.innerHTML = 'Ready to scan QR codes';
+                                resultEl.className = '';
+                            }, 3000);
+                        });
+                }
+            };
+            input.click();
+        });
+    </script>
+</body>
+
+</html>

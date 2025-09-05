@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmation</title>
+</head>
+
+<body>
+    <h2>Hello {{ user.name }},</h2>
+    <p><strong>Order ID:</strong> {{ order.daily_order_number }}</p>
+    <p>Thanks for your order placed at Roriri Canteen on {{ order.created_at|date:"Y-m-d H:i A" }}.</p>
+
+    <h4>🧾 Your Order:</h4>
+    <ul>
+        {% for cart_item in cart_items %}
+        <li>{{ cart_item.menu_item.name }} × {{ cart_item.quantity }}</li>
+        {% endfor %}
+    </ul>
+
+    <p><strong>Total:</strong> ₹{{ order.total_amount }}</p>
+    <p>Enjoy your meal!</p>
+</body>
+
+</html>

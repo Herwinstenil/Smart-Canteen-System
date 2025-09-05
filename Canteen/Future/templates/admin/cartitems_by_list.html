@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Items Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+            animation: floatParticles 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes floatParticles {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            33% {
+                transform: translateY(-20px) rotate(120deg);
+            }
+
+            66% {
+                transform: translateY(10px) rotate(240deg);
+            }
+        }
+
+        .orders-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-custom {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.1),
+                0 8px 32px rgba(0, 0, 0, 0.08);
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: cardAppear 1s ease-out 0.2s both;
+        }
+
+        .card-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #667eea, transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.9) rotateX(10deg);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) rotateX(0deg);
+            }
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .header-icon {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulse 2s ease-in-out infinite;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2d3748, #4a5568);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            animation: titleSlide 0.8s ease-out 0.4s both;
+        }
+
+        @keyframes titleSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+            animation: titleSlide 0.8s ease-out 0.6s both;
+        }
+
+        .table-container {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+            animation: tableSlide 0.8s ease-out 0.8s both;
+        }
+
+        @keyframes tableSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin: 0;
+        }
+
+        .custom-table thead {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            position: relative;
+        }
+
+        .custom-table thead::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            animation: headerGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes headerGlow {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .custom-table th {
+            padding: 1.5rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            position: relative;
+        }
+
+        .custom-table th:nth-child(1),
+        .custom-table td:nth-child(1) {
+            width: 60%;
+            text-align: center;
+        }
+
+        .custom-table th:nth-child(2),
+        .custom-table td:nth-child(2) {
+            width: 40%;
+            text-align: center;
+        }
+
+        .custom-table tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #e2e8f0;
+            animation: rowFadeIn 0.6s ease-out both;
+        }
+
+        .custom-table tbody tr:nth-child(odd) {
+            animation-delay: 0.1s;
+        }
+
+        .custom-table tbody tr:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes rowFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .custom-table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            transform: translateX(8px);
+            box-shadow: 5px 0 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .custom-table td {
+            padding: 1.5rem 2rem;
+            font-size: 1rem;
+            vertical-align: middle;
+            border: none;
+            position: relative;
+        }
+
+        .date-cell {
+            font-weight: 600;
+            color: #2d3748;
+            position: relative;
+        }
+
+        .date-cell::before {
+            content: '📅';
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .btn-modern {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-modern:hover::before {
+            left: 100%;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-modern:active {
+            transform: translateY(0) scale(1);
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #4fd1c7, #06d6a0);
+            margin-top: 2rem;
+        }
+
+        .btn-back:hover {
+            box-shadow: 0 10px 25px rgba(79, 209, 199, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            animation: emptyStateFade 0.8s ease-out 1s both;
+        }
+
+        @keyframes emptyStateFade {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            color: #cbd5e0;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .empty-message {
+            font-size: 1.2rem;
+            color: #718096;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-submessage {
+            color: #a0aec0;
+            font-size: 1rem;
+        }
+
+        .back-section {
+            text-align: center;
+            animation: backSectionSlide 0.8s ease-out 1.2s both;
+        }
+
+        @keyframes backSectionSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .orders-container {
+                padding: 1rem;
+            }
+
+            .card-custom {
+                padding: 2rem 1.5rem;
+                border-radius: 20px;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .custom-table th,
+            .custom-table td {
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .btn-modern {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header-icon {
+                font-size: 3rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .custom-table {
+                font-size: 0.85rem;
+            }
+
+            .custom-table th,
+            .custom-table td {
+                padding: 0.8rem 0.5rem;
+            }
+
+            .btn-modern {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Loading animation for dynamic content */
+        .loading-shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmerEffect 1.5s infinite;
+        }
+
+        @keyframes shimmerEffect {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="orders-container">
+        <div class="card-custom">
+            <div class="header-section">
+                <i class="fas fa-shopping-cart header-icon"></i>
+                <h2>Cart Items Dashboard</h2>
+                <p class="subtitle">Manage and view cart items by date</p>
+            </div>
+
+            {% if dates %}
+            <div class="table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-calendar-alt"></i> Date</th>
+                            <th><i class="fas fa-eye"></i> View Orders</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in dates %}
+                        <tr>
+                            <td class="date-cell">{{ d.date }}</td>
+                            <td>
+                                <a href="{{ d.url }}" class="btn-modern">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    View Orders
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="empty-message">No cart items available</div>
+                <div class="empty-submessage">Cart items will appear here when customers add products</div>
+            </div>
+            {% endif %}
+
+            <div class="back-section">
+                <a href="/admin/" class="btn-modern btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function () {
+            // Animate table rows on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe table rows
+            document.querySelectorAll('tbody tr').forEach(row => {
+                observer.observe(row);
+            });
+
+            // Add click ripple effect to buttons
+            document.querySelectorAll('.btn-modern').forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    let ripple = document.createElement('span');
+                    ripple.style.cssText = `
+                        position: absolute;
+                        border-radius: 50%;
+                        background-color: rgba(255,255,255,0.6);
+                        pointer-events: none;
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        left: ${e.layerX - 10}px;
+                        top: ${e.layerY - 10}px;
+                        width: 20px;
+                        height: 20px;
+                    `;
+
+                    this.appendChild(ripple);
+                    setTimeout(() => ripple.remove(), 600);
+                });
+            });
+
+            // Add hover sound effect simulation (visual feedback)
+            document.querySelectorAll('.custom-table tbody tr').forEach(row => {
+                row.addEventListener('mouseenter', function () {
+                    this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                });
+            });
+        });
+
+        // Add CSS animation for ripple effect
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+</html>
