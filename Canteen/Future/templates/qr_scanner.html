@@ -415,22 +415,457 @@
             }
         }
 
-        /* Mobile responsiveness */
-        @media (max-width: 480px) {
+        /* ========== RESPONSIVE DESIGN ========== */
+
+        /* 4K Screens (2560px and above) */
+        @media (min-width: 2560px) {
             .container {
-                max-width: 350px;
+                max-width: 500px;
+            }
+
+            .title {
+                font-size: 3.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.3rem;
+            }
+
+            #reader {
+                padding: 3rem;
+                border-radius: 30px;
+            }
+
+            .icon-wrapper {
+                font-size: 5rem;
+            }
+
+            .pulse-ring {
+                width: 100px;
+                height: 100px;
+            }
+
+            .btn {
+                padding: 16px 32px;
+                font-size: 1.2rem;
+                min-width: 220px;
+                border-radius: 16px;
+            }
+
+            #result {
+                padding: 1.5rem 2rem;
+                font-size: 1.2rem;
+                min-height: 80px;
+                border-radius: 20px;
+            }
+        }
+
+        /* Large Desktop (1440px - 2559px) */
+        @media (min-width: 1440px) and (max-width: 2559px) {
+            .container {
+                max-width: 450px;
+            }
+
+            .title {
+                font-size: 3rem;
+            }
+
+            #reader {
+                padding: 2.5rem;
+            }
+
+            .btn {
+                padding: 14px 28px;
+                min-width: 200px;
+            }
+        }
+
+        /* Desktop (1024px - 1439px) */
+        @media (min-width: 1024px) and (max-width: 1439px) {
+            .container {
+                max-width: 420px;
+            }
+
+            .title {
+                font-size: 2.8rem;
+            }
+        }
+
+        /* Tablet Landscape (768px - 1023px) */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .container {
+                max-width: 380px;
+            }
+
+            .title {
+                font-size: 2.6rem;
+            }
+
+            #reader {
+                padding: 1.8rem;
+                border-radius: 20px;
+            }
+
+            .icon-wrapper {
+                font-size: 3.5rem;
+            }
+
+            .pulse-ring {
+                width: 70px;
+                height: 70px;
+            }
+
+            .btn {
+                padding: 11px 22px;
+                font-size: 0.95rem;
+                min-width: 170px;
+            }
+
+            #result {
+                margin-top: 1.5rem;
+                padding: 0.9rem 1.3rem;
+                min-height: 55px;
+            }
+        }
+
+        /* Mobile Landscape (425px - 767px) */
+        @media (min-width: 425px) and (max-width: 767px) {
+            body {
+                padding: 0.8rem;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .header {
+                margin-bottom: 1.5rem;
+            }
+
+            .title {
+                font-size: 2.2rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+            }
+
+            #reader {
+                padding: 1.5rem;
+                border-radius: 18px;
+            }
+
+            .scanner-icon {
+                margin-bottom: 1.2rem;
+            }
+
+            .icon-wrapper {
+                font-size: 3rem;
+            }
+
+            .pulse-ring {
+                width: 60px;
+                height: 60px;
+            }
+
+            #camera-container {
+                margin-bottom: 1.2rem;
+                border-radius: 14px;
+            }
+
+            .actions {
+                gap: 0.8rem;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+                min-width: 160px;
+                border-radius: 10px;
+            }
+
+            #result {
+                margin-top: 1.5rem;
+                padding: 0.8rem 1.2rem;
+                min-height: 50px;
+                font-size: 0.9rem;
+                border-radius: 12px;
+            }
+        }
+
+        /* Mobile Portrait (375px - 424px) */
+        @media (min-width: 375px) and (max-width: 424px) {
+            body {
+                padding: 0.6rem;
+            }
+
+            .header {
+                margin-bottom: 1.2rem;
             }
 
             .title {
                 font-size: 2rem;
             }
 
+            .subtitle {
+                font-size: 0.85rem;
+            }
+
             #reader {
-                padding: 1.5rem;
+                padding: 1.2rem;
+                border-radius: 16px;
+            }
+
+            .scanner-icon {
+                margin-bottom: 1rem;
             }
 
             .icon-wrapper {
-                font-size: 3rem;
+                font-size: 2.5rem;
+            }
+
+            .pulse-ring {
+                width: 50px;
+                height: 50px;
+            }
+
+            #camera-container {
+                margin-bottom: 1rem;
+                border-radius: 12px;
+            }
+
+            .actions {
+                gap: 0.7rem;
+            }
+
+            .btn {
+                padding: 9px 18px;
+                font-size: 0.85rem;
+                min-width: 150px;
+                border-radius: 9px;
+            }
+
+            #result {
+                margin-top: 1.2rem;
+                padding: 0.7rem 1rem;
+                min-height: 45px;
+                font-size: 0.85rem;
+                border-radius: 10px;
+            }
+        }
+
+        /* Small Mobile (320px - 374px) */
+        @media (max-width: 374px) {
+            body {
+                padding: 0.5rem;
+                justify-content: flex-start;
+                min-height: 100vh;
+            }
+
+            .container {
+                max-width: 100%;
+                margin-top: 1rem;
+            }
+
+            .header {
+                margin-bottom: 1rem;
+            }
+
+            .title {
+                font-size: 1.8rem;
+                line-height: 1.2;
+            }
+
+            .subtitle {
+                font-size: 0.8rem;
+            }
+
+            #reader {
+                padding: 1rem;
+                border-radius: 14px;
+            }
+
+            .scanner-icon {
+                margin-bottom: 0.8rem;
+            }
+
+            .icon-wrapper {
+                font-size: 2.2rem;
+            }
+
+            .pulse-ring {
+                width: 45px;
+                height: 45px;
+            }
+
+            #camera-container {
+                margin-bottom: 0.8rem;
+                border-radius: 10px;
+            }
+
+            .actions {
+                gap: 0.6rem;
+            }
+
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+                min-width: 140px;
+                border-radius: 8px;
+                gap: 6px;
+            }
+
+            #result {
+                margin-top: 1rem;
+                padding: 0.6rem 0.9rem;
+                min-height: 40px;
+                font-size: 0.8rem;
+                border-radius: 8px;
+            }
+
+            /* Adjust QR box size for very small screens */
+            .html5-qrcode-element {
+                width: 100% !important;
+            }
+        }
+
+        /* Landscape orientation for mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 0.5rem;
+                justify-content: flex-start;
+            }
+
+            .container {
+                max-width: 100%;
+                margin: 0.5rem auto;
+            }
+
+            .header {
+                margin-bottom: 1rem;
+            }
+
+            .title {
+                font-size: 1.8rem;
+            }
+
+            #reader {
+                padding: 1rem;
+            }
+
+            .scanner-icon {
+                margin-bottom: 0.8rem;
+            }
+
+            .icon-wrapper {
+                font-size: 2rem;
+            }
+
+            .pulse-ring {
+                width: 40px;
+                height: 40px;
+            }
+
+            #camera-container {
+                margin-bottom: 0.8rem;
+            }
+
+            .actions {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
+            .btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+                min-width: auto;
+                flex: 1;
+                max-width: 140px;
+            }
+
+            #result {
+                margin-top: 1rem;
+                padding: 0.5rem 0.8rem;
+                min-height: 35px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* High DPI screens */
+        @media (-webkit-min-device-pixel-ratio: 2),
+        (min-resolution: 192dpi) {
+            #reader {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+        }
+
+        /* Reduced motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .title {
+                animation: none !important;
+            }
+
+            .icon-wrapper,
+            .pulse-ring,
+            #camera-container::after {
+                animation: none !important;
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .btn:hover {
+                transform: none;
+            }
+
+            .btn:active {
+                transform: scale(0.98);
+            }
+
+            #reader::before {
+                display: none;
+            }
+
+            .btn::before {
+                display: none;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white !important;
+            }
+
+            body::before,
+            .pulse-ring,
+            #camera-container::after {
+                display: none;
+            }
+
+            #reader {
+                background: white;
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+
+            .title {
+                background: black !important;
+                -webkit-text-fill-color: black !important;
+                color: black !important;
+            }
+
+            .subtitle {
+                color: #666 !important;
             }
         }
     </style>
@@ -511,11 +946,23 @@
             const resultEl = document.getElementById('result');
             const cameraContainer = document.getElementById("camera-container");
 
+            // Adjust QR box size based on screen width
+            const screenWidth = window.innerWidth;
+            let qrboxSize = 250;
+
+            if (screenWidth < 375) {
+                qrboxSize = 180;
+            } else if (screenWidth < 425) {
+                qrboxSize = 200;
+            } else if (screenWidth < 768) {
+                qrboxSize = 220;
+            }
+
             html5QrcodeScanner.start(
                 { facingMode: "environment" },
                 {
                     fps: 10,
-                    qrbox: { width: 250, height: 250 }
+                    qrbox: { width: qrboxSize, height: qrboxSize }
                 },
                 onScanSuccess,
                 onScanError
@@ -594,6 +1041,20 @@
             };
             input.click();
         });
+
+        // Handle orientation changes
+        window.addEventListener('resize', function () {
+            // Adjust layout on resize
+            if (window.innerHeight < 500 && window.innerWidth > window.innerHeight) {
+                // Landscape mode adjustments
+                document.body.style.padding = '0.5rem';
+            }
+        });
+
+        // Initialize with current screen size
+        if (window.innerHeight < 500 && window.innerWidth > window.innerHeight) {
+            document.body.style.padding = '0.5rem';
+        }
     </script>
 </body>
 
