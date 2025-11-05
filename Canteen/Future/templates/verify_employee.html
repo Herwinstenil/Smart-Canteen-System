@@ -428,43 +428,6 @@
       }
     }
 
-    /* Mobile optimizations */
-    @media (max-width: 768px) {
-      .card-content {
-        padding: 2rem 1.5rem;
-      }
-
-      .employee-name {
-        font-size: 1.8rem;
-      }
-
-      .balance-amount {
-        font-size: 2.2rem;
-      }
-
-      .pin-input {
-        font-size: 1.1rem;
-      }
-    }
-
-    @media (max-width: 576px) {
-      .main-container {
-        padding: 1rem;
-      }
-
-      .balance-card {
-        padding: 1.2rem 1.5rem;
-      }
-
-      .employee-name {
-        font-size: 1.6rem;
-      }
-
-      .balance-amount {
-        font-size: 2rem;
-      }
-    }
-
     /* Loading animation for number counting */
     .counting {
       position: relative;
@@ -492,6 +455,564 @@
       51%,
       100% {
         opacity: 0;
+      }
+    }
+
+    /* ========== RESPONSIVE DESIGN ========== */
+
+    /* 4K Screens (2560px and above) */
+    @media (min-width: 2560px) {
+      .container {
+        max-width: 1400px;
+      }
+
+      .verification-card {
+        border-radius: 40px;
+      }
+
+      .card-content {
+        padding: 4rem 3rem;
+      }
+
+      .employee-name {
+        font-size: 3.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .balance-card {
+        padding: 2.5rem 3rem;
+        border-radius: 30px;
+      }
+
+      .balance-amount {
+        font-size: 4rem;
+      }
+
+      .balance-label {
+        font-size: 1.4rem;
+      }
+
+      .status-badge {
+        padding: 1.2rem 2.5rem;
+        font-size: 1.4rem;
+        border-radius: 35px;
+        margin-bottom: 2.5rem;
+      }
+
+      .pin-input {
+        padding: 1.5rem 2rem;
+        font-size: 1.5rem;
+        border-radius: 20px;
+      }
+
+      .mic-button {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+      }
+
+      .mic-icon {
+        width: 25px;
+        height: 25px;
+      }
+
+      .continue-button {
+        padding: 1.5rem 2.5rem;
+        font-size: 1.5rem;
+        border-radius: 20px;
+      }
+
+      .alert {
+        padding: 1.5rem 2rem;
+        border-radius: 20px;
+        font-size: 1.2rem;
+      }
+    }
+
+    /* Large Desktop (1440px - 2559px) */
+    @media (min-width: 1440px) and (max-width: 2559px) {
+      .container {
+        max-width: 1200px;
+      }
+
+      .employee-name {
+        font-size: 2.8rem;
+      }
+
+      .balance-amount {
+        font-size: 3.2rem;
+      }
+
+      .card-content {
+        padding: 3rem 2.5rem;
+      }
+    }
+
+    /* Desktop (1024px - 1439px) */
+    @media (min-width: 1024px) and (max-width: 1439px) {
+      .container {
+        max-width: 1000px;
+      }
+
+      .employee-name {
+        font-size: 2.5rem;
+      }
+
+      .balance-amount {
+        font-size: 3rem;
+      }
+    }
+
+    /* Tablet Landscape (768px - 1023px) */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      body {
+        padding: 1rem 0.5rem;
+      }
+
+      .container {
+        max-width: 100%;
+      }
+
+      .verification-card {
+        border-radius: 28px;
+      }
+
+      .card-content {
+        padding: 2rem 1.5rem;
+      }
+
+      .employee-name {
+        font-size: 2rem;
+        margin-bottom: 1.2rem;
+      }
+
+      .balance-card {
+        padding: 1.2rem 1.5rem;
+        border-radius: 18px;
+      }
+
+      .balance-amount {
+        font-size: 2.4rem;
+      }
+
+      .balance-label {
+        font-size: 0.9rem;
+      }
+
+      .status-badge {
+        padding: 0.6rem 1.2rem;
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .pin-input {
+        padding: 0.9rem 1.2rem;
+        font-size: 1.1rem;
+        border-radius: 14px;
+      }
+
+      .mic-button {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+      }
+
+      .mic-icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      .continue-button {
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+        border-radius: 14px;
+      }
+    }
+
+    /* Mobile Landscape (425px - 767px) */
+    @media (min-width: 425px) and (max-width: 767px) {
+      body {
+        padding: 0.8rem 0.4rem;
+      }
+
+      .verification-card {
+        border-radius: 24px;
+      }
+
+      .card-content {
+        padding: 1.5rem 1.2rem;
+      }
+
+      .employee-name {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+      }
+
+      .balance-container {
+        margin-bottom: 1.5rem;
+      }
+
+      .balance-card {
+        padding: 1rem 1.2rem;
+        border-radius: 16px;
+      }
+
+      .balance-amount {
+        font-size: 2rem;
+      }
+
+      .balance-label {
+        font-size: 0.85rem;
+      }
+
+      .status-badge {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        margin-bottom: 1.2rem;
+      }
+
+      .pin-section {
+        margin-top: 1.5rem;
+      }
+
+      .pin-input-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .pin-input {
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        border-radius: 12px;
+        letter-spacing: 0.3rem;
+      }
+
+      .mic-button {
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        right: 6px;
+      }
+
+      .mic-icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      .continue-button {
+        padding: 0.9rem 1.2rem;
+        font-size: 1rem;
+        border-radius: 12px;
+      }
+
+      .alert {
+        padding: 0.8rem 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+      }
+    }
+
+    /* Mobile Portrait (375px - 424px) */
+    @media (min-width: 375px) and (max-width: 424px) {
+      body {
+        padding: 0.6rem 0.3rem;
+      }
+
+      .verification-card {
+        border-radius: 20px;
+      }
+
+      .card-content {
+        padding: 1.2rem 1rem;
+      }
+
+      .employee-name {
+        font-size: 1.6rem;
+        margin-bottom: 0.8rem;
+      }
+
+      .balance-card {
+        padding: 0.8rem 1rem;
+        border-radius: 14px;
+      }
+
+      .balance-amount {
+        font-size: 1.8rem;
+      }
+
+      .balance-label {
+        font-size: 0.8rem;
+      }
+
+      .status-badge {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+      }
+
+      .pin-input {
+        padding: 0.7rem 0.9rem;
+        font-size: 0.9rem;
+        border-radius: 10px;
+        letter-spacing: 0.2rem;
+      }
+
+      .mic-button {
+        width: 34px;
+        height: 34px;
+        border-radius: 7px;
+        right: 5px;
+      }
+
+      .mic-icon {
+        width: 14px;
+        height: 14px;
+      }
+
+      .continue-button {
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+        border-radius: 10px;
+      }
+    }
+
+    /* Small Mobile (320px - 374px) */
+    @media (max-width: 374px) {
+      body {
+        padding: 0.5rem 0.2rem;
+      }
+
+      .verification-card {
+        border-radius: 18px;
+      }
+
+      .card-content {
+        padding: 1rem 0.8rem;
+      }
+
+      .employee-name {
+        font-size: 1.4rem;
+        margin-bottom: 0.7rem;
+        line-height: 1.2;
+      }
+
+      .balance-card {
+        padding: 0.7rem 0.9rem;
+        border-radius: 12px;
+      }
+
+      .balance-amount {
+        font-size: 1.6rem;
+      }
+
+      .balance-label {
+        font-size: 0.75rem;
+      }
+
+      .status-badge {
+        padding: 0.35rem 0.7rem;
+        font-size: 0.8rem;
+        margin-bottom: 0.8rem;
+      }
+
+      .pin-input {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+        border-radius: 8px;
+        letter-spacing: 0.15rem;
+      }
+
+      .mic-button {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        right: 4px;
+      }
+
+      .mic-icon {
+        width: 12px;
+        height: 12px;
+      }
+
+      .continue-button {
+        padding: 0.7rem 0.9rem;
+        font-size: 0.85rem;
+        border-radius: 8px;
+      }
+
+      .alert {
+        padding: 0.7rem 0.8rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Landscape orientation for mobile */
+    @media (max-height: 500px) and (orientation: landscape) {
+      body {
+        padding: 0.3rem;
+      }
+
+      .main-container {
+        margin: 0.5rem auto;
+      }
+
+      .verification-card {
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
+      .photo-section {
+        display: none;
+      }
+
+      .card-content {
+        padding: 1rem;
+      }
+
+      .employee-name {
+        font-size: 1.4rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .balance-container {
+        margin-bottom: 0.8rem;
+      }
+
+      .balance-card {
+        padding: 0.6rem 1rem;
+      }
+
+      .balance-amount {
+        font-size: 1.4rem;
+      }
+
+      .status-badge {
+        margin-bottom: 0.8rem;
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+      }
+
+      .pin-section {
+        margin-top: 0.8rem;
+      }
+
+      .pin-input-group {
+        margin-bottom: 0.8rem;
+      }
+    }
+
+    /* High DPI screens optimization */
+    @media (-webkit-min-device-pixel-ratio: 2),
+    (min-resolution: 192dpi) {
+      .verification-card {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+    }
+
+    /* Reduced motion for accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .employee-name,
+      .balance-card,
+      .status-badge,
+      .counting::after {
+        animation: none !important;
+      }
+
+      .verification-card::before,
+      .balance-card::before,
+      .continue-button::before {
+        display: none;
+      }
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) and (pointer: coarse) {
+      .verification-card:hover::before {
+        left: -100%;
+      }
+
+      .photo-section:hover .employee-photo {
+        transform: none;
+      }
+
+      .photo-section:hover .photo-overlay {
+        opacity: 0;
+      }
+
+      .continue-button:hover {
+        transform: none;
+      }
+
+      .continue-button:active {
+        transform: scale(0.98);
+      }
+
+      .mic-button:hover {
+        transform: translateY(-50%);
+      }
+
+      .pin-input:focus {
+        transform: none;
+      }
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: white !important;
+      }
+
+      body::before {
+        display: none;
+      }
+
+      .verification-card {
+        background: white;
+        box-shadow: none;
+        border: 1px solid #ccc;
+      }
+
+      .employee-name {
+        background: black !important;
+        -webkit-text-fill-color: black !important;
+        color: black !important;
+      }
+
+      .balance-card {
+        background: #f8f9fa !important;
+        box-shadow: none;
+      }
+
+      .balance-amount {
+        color: black !important;
+      }
+
+      .balance-label {
+        color: #666 !important;
+      }
+
+      .status-badge {
+        background: #28a745 !important;
+        box-shadow: none;
+      }
+
+      .pin-input {
+        background: #f8f9fa !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+      }
+
+      .continue-button {
+        background: #007bff !important;
+        box-shadow: none;
       }
     }
   </style>
@@ -655,6 +1176,19 @@
       submitBtn.innerHTML = '⏳ Verifying...';
       submitBtn.style.background = 'linear-gradient(135deg, #ffc107, #fd7e14)';
     });
+
+    // Handle orientation changes
+    window.addEventListener('resize', function () {
+      if (window.innerHeight < 500 && window.innerWidth > window.innerHeight) {
+        // Landscape mode - adjust layout if needed
+        document.body.style.padding = '0.3rem';
+      }
+    });
+
+    // Initialize with current screen size
+    if (window.innerHeight < 500 && window.innerWidth > window.innerHeight) {
+      document.body.style.padding = '0.3rem';
+    }
   </script>
 </body>
 
